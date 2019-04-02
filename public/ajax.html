@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+
+    <script type="text/javascript">
+      // fetch("/ajax").then(res=>res.text()).then(text=>console.log(text));
+      var xhr = new XMLHttpRequest();
+      xhr.open("get","/ajax");
+      xhr.onreadystatechange = function () {
+        if(xhr.status == 200 && xhr.readyState == 4){
+          console.log(xhr.response);
+        }
+      };
+      xhr.send();
+    </script>
+
+  </body>
+</html>
