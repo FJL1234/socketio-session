@@ -7,6 +7,13 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
+var session = require("express-session")({
+  secret:"keyboard cat",
+  cookie:{maxAge:800000},
+});
+
+var iosession = require("express-socket.io-session")(session); //
+
 var app = express();
 
 //app ~ server ~ io(socket.io)
@@ -15,7 +22,7 @@ var io = require("socket.io")(server);  //socket.io与http服务器进行关联
 server.listen(3000);
 
 let firstSocket;
-
+io.use(iosession);
 //监听请求
 io.on("connection",function (socket) {  //每一次被调用的时候socket都是一个全新的对象
   //only test
@@ -31,7 +38,10 @@ io.on("connection",function (socket) {  //每一次被调用的时候socket都�
   })
 
   socket.on("say",data=>{
-    io.emit("newsay",data + "(创建时间：" + new Date() + ")");  //将socket改成io可以返回给当前连接服务器的所有socket
+    const num = ++socket.handshake.session.num;
+    socket.handshake.session.save();
+    // io.emit("newsay",data + "(创建时间：" + new Date() + ")");  //将socket改成io可以返回给当前连接服务器的所有socket
+    io.emit("newsay",data + "num = " + num);
   })
 
 });
@@ -44,6 +54,7 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(session);
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
