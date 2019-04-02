@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script> <!--导入一个库，为了生成一个io对象 -->
+
+  </head>
+  <body>
+    <div class="list">
+
+    </div>
+
+    <input type="text" name="" onchange="say(event)" value="">
+
+    <script type="text/javascript">
+      const socket = io.connect(); //生成一个io对象，通过connect与服务器进行连接，默认访问localhost
+      const listdom = document.querySelector(".list");
+
+      socket.emit("req","abc",function (res) {  //第三个参数增加一个回调函数用来监听服务器端的响应
+        console.log("有了响应");
+        console.log(res);
+      });
+
+      socket.on("newsay",word=>{
+        const pdom = document.createElement("p");
+        pdom.innerText = word;
+        listdom.appendChild(pdom);
+      })
+
+      function say(event) {
+        socket.emit("say",event.target.value);
+      }
+    </script>
+  </body>
+</html>
